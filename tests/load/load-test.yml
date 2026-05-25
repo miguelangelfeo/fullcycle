@@ -1,0 +1,24 @@
+config:
+  target: "http://127.0.0.1:8080"
+  phases:
+    - duration: 30
+      arrivalRate: 5
+      name: "Fase de calentamiento (Warm up)"
+    - duration: 60
+      arrivalRate: 20
+      name: "Fase de carga sostenida"
+    - duration: 30
+      arrivalRate: 50
+      name: "Pico de estrés (Spike)"
+
+scenarios:
+  - name: "Carga de página principal"
+    flow:
+      - get:
+          url: "/"
+          expect:
+            - statusCode: 200
+      - think: 2 # Simular tiempo de lectura/renderizado
+      - get:
+          url: "/assets/index.js" # Intentar simular carga de estáticos, pero fallará si el nombre cambia. Se deja como ejemplo genérico.
+          # Artillery ignores 404s by default if not strictly expected, so this is fine as a generic hit.
